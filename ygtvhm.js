@@ -76,7 +76,7 @@ var yAxis = ["6:45pm-8:00pm", "5:30pm-6:30pm", "4:15pm-5:15pm", "3:00pm-4:00pm",
 var xAxis = [];
 
 Promise.all([
-    /* DATA */
+/* DATA */
 ]).then(function(dataset) {
     dataset.forEach (function(data) {
         data.forEach (function(item) {
@@ -89,6 +89,7 @@ Promise.all([
         })
     });
     xAxis = Array.from(xAxisSet);
+    xAxis.sort();
     heatmap("weight", weight, xAxis, yAxis);
     heatmap("cybex", cybex, xAxis, yAxis);
     heatmap("cardio", cardio, xAxis, yAxis);
