@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import os
 import subprocess
 import shlex
@@ -6,7 +7,6 @@ import shlex
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(BASE, "data")
-
 JS = "ygtvhm.js"
 
 
@@ -22,15 +22,13 @@ def run(cmd):
 def patch(data):
     with open(JS, "r") as fp:
         lines = fp.readlines()
-
     pos = lines.index("/* DATA */\n")
     lines.insert(pos, f'd3.json("{data}"),\n')
-
     with open(JS, "w") as fp:
         fp.write("".join(lines))
 
 
-def main():
+def main(args):
     out = run("git ls-files").decode()
     git_data = [x for x in out.split("\n") if x.startswith("data/")]
     sys_data = [f"data/{x}" for x in os.listdir(DATA)]
@@ -38,11 +36,13 @@ def main():
     for data in sys_data:
         if data not in git_data:
             print(f"+ {data}")
-
             patch(data)
-            run(f"git add {data} {JS}")
-            run(f"git commit -m 'add {data}'")
+            if not args.skip:
+                run(f"git add {data} {JS}")
+                run(f"git commit -m 'add {data}'")
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-s", "--skip", action="store_true")
+    main(ap.parse_args())
