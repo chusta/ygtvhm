@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import datetime
 import json
 import os
-import random
 import requests
 import re
 import time
@@ -17,7 +16,7 @@ with open("config.json", "r") as fp:
 
 
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-ROOMS = ["cybex", "cardio", "free"]
+ROOMS = {"cybex": 9, "cardio": 12, "free": 12}
 
 
 def fetch(dt_a, dt_z):
@@ -73,15 +72,14 @@ def transform(entry):
         return
 
     room = entry["room"].lower().split()[0]
-    if room not in ROOMS:
+    if room not in ROOMS.keys():
         return
 
     slot = entry["slot"]
     free = int(entry["free"])
-    used = CFG["max"][room] - free
+    used = ROOMS[room] - free
 
     return {
-        "day": day,
         "date": date,
         "slot": slot,
         "used": used,
@@ -92,9 +90,9 @@ def transform(entry):
 def dedup(items):
     def is_same(a, b):
         return (
-                a["day"] == b["day"] and
-                a["slot"] == b["slot"] and
-                a["room"] == b["room"]
+            a["date"] == b["date"] and
+            a["slot"] == b["slot"] and
+            a["room"] == b["room"]
         )
 
     weight = list()
@@ -122,20 +120,17 @@ def dedup(items):
 
 def main(args):
     for a, b in daterange(args.a, args.b):
-        time.sleep(random.randint(1, 5))
-
         results = list()
         for item in fetch(a, b):
             if (free := parse_spots(item[9])):
                 x = {
+                    "free": free,
                     "date": item[0],
                     "slot": item[1],
                     "room": item[4],
-                    "free": free,
                 }
                 if (data := transform(x)):
                     results.append(data)
-
         fpath = f"{a}-{b}.json"
         with open(os.path.join(DATA, fpath), "w") as fp:
             json.dump(dedup(results), fp)
