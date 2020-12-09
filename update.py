@@ -36,8 +36,8 @@ def main(args):
     for data in sys_data:
         if data not in git_data:
             print(f"+ {data}")
-            patch(data)
             if not args.skip:
+                patch(data)
                 run(f"git add {data} {JS}")
                 run(f"git commit -m 'add {data}'")
 
