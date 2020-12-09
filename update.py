@@ -30,8 +30,8 @@ def patch(data):
 
 def main(args):
     out = run("git ls-files").decode()
-    git_data = [x for x in out.split("\n") if x.startswith("data/")]
-    sys_data = [f"data/{x}" for x in os.listdir(DATA)]
+    git_data = sorted([x for x in out.split("\n") if x.startswith("data/")])
+    sys_data = sorted([f"data/{x}" for x in os.listdir(DATA)])
 
     for data in sys_data:
         if data not in git_data:
