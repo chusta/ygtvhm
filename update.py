@@ -23,7 +23,9 @@ def patch(data):
     with open(JS, "r") as fp:
         lines = fp.readlines()
     pos = lines.index("/* DATA */\n")
-    lines.insert(pos, f'd3.json("{data}"),\n')
+    line = f'd3.json("{data}"),\n'
+    if line not in lines:
+        lines.insert(pos, line)
     with open(JS, "w") as fp:
         fp.write("".join(lines))
 
