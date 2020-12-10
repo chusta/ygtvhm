@@ -135,10 +135,12 @@ def main(args):
         with open(os.path.join(DATA, fpath), "w") as fp:
             json.dump(dedup(results), fp)
         print(f"[+] {fpath} ({len(results)})")
+        time.sleep(args.sleep)
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("-a", default="20201005")
     ap.add_argument("-b", default=time.time())
+    ap.add_argument("-s", "--sleep", default=1, type=int)
     main(ap.parse_args())
