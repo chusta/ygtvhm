@@ -99,6 +99,7 @@ var draw = function(data, type, yAxis) {
 var yWeekday = ["6:45pm-8:00pm", "5:30pm-6:30pm", "4:15pm-5:15pm", "3:00pm-4:00pm", "10:00am-11:00am", "8:30am-9:45am", "7:00am-8:15am", "5:30am-6:45am"];
 var yWeekend = ["9:00am-10:00am", "8:00am-9:00am", "7:00am-8:00am"];
 var dataWeekday = [
+d3.json("data/1601870400-1602388800.json"),
 /* WEEKDAY */
 ];
 var dataWeekend = [
