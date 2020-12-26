@@ -48,11 +48,13 @@ def main():
         if data not in git_data:
             patch(data, "WEEKDAY")
             run(f"git add {data} {JS}")
-            run(f"git commit -m 'add {data}'")
+            run(f"git commit -m '{data}'")
 
     for data in weekend:
         if data not in git_data:
             patch(data, "WEEKEND")
+            run(f"git add {data} {JS}")
+            run(f"git commit -m '{data}'")
 
 
 if __name__ == "__main__":
