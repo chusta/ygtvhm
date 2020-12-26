@@ -30,6 +30,9 @@ def patch(data, date_type):
     with open(JS, "w") as fp:
         fp.write("".join(lines))
 
+    run(f"git add {data} {JS}")
+    run(f"git commit -m 'add {data}'")
+
 
 def main():
     out = run("git ls-files").decode()
@@ -44,17 +47,11 @@ def main():
         else:
             weekend.append(x)
 
-    for data in weekday:
-        if data not in git_data:
-            patch(data, "WEEKDAY")
-            run(f"git add {data} {JS}")
-            run(f"git commit -m '{data}'")
-
-    for data in weekend:
-        if data not in git_data:
-            patch(data, "WEEKEND")
-            run(f"git add {data} {JS}")
-            run(f"git commit -m '{data}'")
+    for a, b in zip(weekday, weekend):
+        if a not in git_data:
+            patch(a, "WEEKDAY")
+        if b not in git_data:
+            patch(b, "WEEKEND")
 
 
 if __name__ == "__main__":
