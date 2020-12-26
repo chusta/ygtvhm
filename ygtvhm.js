@@ -115,6 +115,7 @@ d3.json("data/1603080000-1603598400s.json"),
 d3.json("data/1603684800-1604203200s.json"),
 d3.json("data/1604293200-1604811600s.json"),
 d3.json("data/1604898000-1605416400s.json"),
+d3.json("data/1605502800-1606021200s.json"),
 /* WEEKEND */
 ];
 draw(dataWeekday, "_weekday", yWeekday);
