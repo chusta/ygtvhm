@@ -1,20 +1,18 @@
 var heatmap = function(divId, hmData, xAxis, yAxis) {
-    var colors = ["#ffffff", "#ffffff", "#ffe5c1", "#ffe5c1", "#ffc672", "#ffc672", "#ff9352", "#ff9352", "#ff4e37", "#ff4e37", "#ff0000", "#ff0000", "#ff0000"];
-    var hmWidth = xAxis.length * 35;
-    var hmHeight = yAxis.length * 50;
+    let colors = ["#ffffff", "#ffffff", "#ffe5c1", "#ffe5c1", "#ffc672", "#ffc672", "#ff9352", "#ff9352", "#ff4e37", "#ff4e37", "#ff0000", "#ff0000", "#ff0000"];
 
-    var margin = {top: 50, right: 30, bottom: 100, left: 110},
-        width = hmWidth - margin.left - margin.right,
-        height = hmHeight - margin.top - margin.bottom;
+    let margin = {top: 50, right: 30, bottom: 100, left: 110};
+    let width = xAxis.length * 35;
+    let height = yAxis.length * 35;
 
-    var svg = d3.select(`#${divId}`)
+    let svg = d3.select(`#${divId}`)
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    var x = d3.scaleBand()
+    let x = d3.scaleBand()
         .range([0, width])
         .domain(xAxis)
         .padding(0.01);
@@ -28,7 +26,7 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .style("font-weight", "bold")
         .attr("transform", "rotate(-45)");
 
-    var y = d3.scaleBand()
+    let y = d3.scaleBand()
         .range([height, 0])
         .domain(yAxis)
         .padding(0.01);
@@ -39,9 +37,9 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .style("font-weight", "bold")
         .style("font-size", 12);
 
-    var maxSize = divId === "cybex" ? 9 : 12;
+    let maxSize = divId === "cybex" ? 9 : 12;
 
-    var colorScale = d3.scaleQuantile()
+    let colorScale = d3.scaleQuantile()
         .domain([0, maxSize])
         .range(colors);
 
@@ -67,30 +65,44 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .style("opacity", 0.8);
 };
 
-var cybex = [];
-var cardio = [];
-var weight = [];
+var draw = function(data, type, yAxis) {
+    let cybex = [];
+    let cardio = [];
+    let weight = [];
 
-var xAxisSet = new Set;
-var yAxis = ["6:45pm-8:00pm", "5:30pm-6:30pm", "4:15pm-5:15pm", "3:00pm-4:00pm", "10:00am-11:00am", "8:30am-9:45am", "7:00am-8:15am", "5:30am-6:45am"];
-var xAxis = [];
+    let xAxisSet = new Set;
+    let xAxis = [];
 
-Promise.all([
-/* DATA */
-]).then(function(dataset) {
-    dataset.forEach (function(data) {
-        data.forEach (function(item) {
-            xAxisSet.add(item.date);
-            switch(item.room) {
-                case "free": weight.push(item); break;
-                case "cybex": cybex.push(item); break;
-                case "cardio": cardio.push(item); break;
-            }
-        })
+    Promise.all(data)
+    .then(function(dataset) {
+        dataset.forEach (function(data) {
+            data.forEach (function(item) {
+                xAxisSet.add(item.date);
+                switch(item.room) {
+                    case "free": weight.push(item); break;
+                    case "cybex": cybex.push(item); break;
+                    case "cardio": cardio.push(item); break;
+                }
+            })
+        });
+        xAxis = Array.from(xAxisSet);
+        xAxis.sort();
+        console.log(weight);
+        console.log(xAxis);
+        console.log(yAxis);
+        heatmap(`weight${type}`, weight, xAxis, yAxis);
+        heatmap(`cybex${type}`, cybex, xAxis, yAxis);
+        heatmap(`cardio${type}`, cardio, xAxis, yAxis);
     });
-    xAxis = Array.from(xAxisSet);
-    xAxis.sort();
-    heatmap("weight", weight, xAxis, yAxis);
-    heatmap("cybex", cybex, xAxis, yAxis);
-    heatmap("cardio", cardio, xAxis, yAxis);
-});
+};
+
+var yWeekday = ["6:45pm-8:00pm", "5:30pm-6:30pm", "4:15pm-5:15pm", "3:00pm-4:00pm", "10:00am-11:00am", "8:30am-9:45am", "7:00am-8:15am", "5:30am-6:45am"];
+var yWeekend = ["9:00am-10:00am", "8:00am-9:00am", "7:00am-8:00am"];
+var dataWeekday = [
+/* WEEKDAY */
+];
+var dataWeekend = [
+/* WEEKEND */
+];
+draw(dataWeekday, "_weekday", yWeekday);
+draw(dataWeekend, "_weekend", yWeekend);

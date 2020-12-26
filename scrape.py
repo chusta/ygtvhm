@@ -11,12 +11,14 @@ import time
 BASE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(BASE, "data")
 
-with open("config.json", "r") as fp:
-    CFG = json.load(fp)
-
-
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 ROOMS = {"cybex": 9, "cardio": 12, "free": 12}
+
+if not os.path.exists(DATA):
+    os.mkdir(DATA)
+
+with open("config.json", "r") as fp:
+    CFG = json.load(fp)
 
 
 def fetch(dt_a, dt_z):
@@ -57,34 +59,32 @@ def daterange(dt_a, dt_z):
         a += datetime.timedelta(days=7)
 
 
-def parse_spots(html):
-    soup = BeautifulSoup(html, "html.parser")
-    spot = soup.find("a", {"class": "signUpGXP"})
-    if spot:
-        rx = re.match(r"\d+", spot["textmsg"])
-        return rx.group() if rx else "0"
+def transform(entry, r_weekday, r_weekend):
+    def parse_spots(html):
+        soup = BeautifulSoup(html, "html.parser")
+        if spot := soup.find("a", {"class": "signUpGXP"}):
+            rx = re.match(r"\d+", spot["textmsg"])
+            return rx.group() if rx else "0"
 
-
-def transform(entry):
-    day, date = entry["date"].split(", ", 1)
-    date = datetime.datetime.strptime(date, "%B %d, %Y").strftime("%Y-%m-%d")
-    if day not in WEEKDAYS:
-        return
-
-    room = entry["room"].lower().split()[0]
+    room = entry[4].lower().split()[0]
     if room not in ROOMS.keys():
         return
 
-    slot = entry["slot"]
-    free = int(entry["free"])
-    used = ROOMS[room] - free
+    day, date = entry[0].split(", ", 1)
+    date = datetime.datetime.strptime(date, "%B %d, %Y").strftime("%Y-%m-%d")
+    used = ROOMS[room] - int(parse_spots(entry[9]))
+    slot = entry[1]
 
-    return {
+    data = {
         "date": date,
         "slot": slot,
         "used": used,
         "room": room,
     }
+    if day in WEEKDAYS:
+        r_weekday.append(data)
+    else:
+        r_weekend.append(data)
 
 
 def dedup(items):
@@ -95,9 +95,7 @@ def dedup(items):
             a["room"] == b["room"]
         )
 
-    weight = list()
-    cardio = list()
-    cybex = list()
+    weight, cardio, cybex = [], [], []
     for i in items:
         if i["room"] == "free":
             weight.append(i)
@@ -118,23 +116,21 @@ def dedup(items):
     return weight + cardio + cybex
 
 
+def write(name, data):
+    with open(os.path.join(DATA, name), "w") as fp:
+        json.dump(dedup(data), fp)
+    print(f"[+] {name} ({len(data)})")
+
+
 def main(args):
     for a, b in daterange(args.a, args.b):
-        results = list()
+        r_weekday = list()
+        r_weekend = list()
         for item in fetch(a, b):
-            if (free := parse_spots(item[9])):
-                x = {
-                    "free": free,
-                    "date": item[0],
-                    "slot": item[1],
-                    "room": item[4],
-                }
-                if (data := transform(x)):
-                    results.append(data)
-        fpath = f"{a}-{b}.json"
-        with open(os.path.join(DATA, fpath), "w") as fp:
-            json.dump(dedup(results), fp)
-        print(f"[+] {fpath} ({len(results)})")
+            transform(item, r_weekday, r_weekend)
+
+        write(f"{a}-{b}.json", r_weekday)
+        write(f"{a}-{b}s.json", r_weekend)
         time.sleep(args.sleep)
 
 
