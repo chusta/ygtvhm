@@ -100,6 +100,7 @@ var yWeekday = ["6:45pm-8:00pm", "5:30pm-6:30pm", "4:15pm-5:15pm", "3:00pm-4:00p
 var yWeekend = ["9:00am-10:00am", "8:00am-9:00am", "7:00am-8:00am"];
 var dataWeekday = [
 d3.json("data/1601870400-1602388800.json"),
+d3.json("data/1602475200-1602993600.json"),
 /* WEEKDAY */
 ];
 var dataWeekend = [
