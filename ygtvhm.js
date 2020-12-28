@@ -110,6 +110,7 @@ d3.json("data/1606107600-1606626000.json"),
 d3.json("data/1606712400-1607230800.json"),
 d3.json("data/1607317200-1607835600.json"),
 d3.json("data/1607922000-1608440400.json"),
+d3.json("data/1608526800-1609045200.json"),
 /* WEEKDAY */
 ];
 var dataWeekend = [
