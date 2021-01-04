@@ -85,9 +85,6 @@ var draw = function(data, type, yAxis) {
         });
         xAxis = Array.from(xAxisSet);
         xAxis.sort();
-        console.log(weight);
-        console.log(xAxis);
-        console.log(yAxis);
         heatmap(`weight_${type}`, weight, xAxis, yAxis);
         heatmap(`cybex_${type}`, cybex, xAxis, yAxis);
         heatmap(`cardio_${type}`, cardio, xAxis, yAxis);
