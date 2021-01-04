@@ -35,9 +35,11 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .style("font-weight", "bold")
         .style("font-size", 12);
 
+    let maxSize = divId.startsWith("cybex") ? 9 : 12;
+
     let colorScale = d3.scaleLinear()
         .range(["white", "#e00000"])
-        .domain([0, divId === "cybex" ? 9 : 12]);
+        .domain([0, maxSize]);
 
     let [hmTitle, hmType] = divId.split("_");
 
@@ -48,6 +50,34 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .style("font-size", "24px")
         .style("font-family", "monospace")
         .text(`${hmTitle} (${hmType})`);
+
+    let tooltip = d3.select("#tooltip")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("font-family", "monospace")
+        .style("font-size", "10")
+        .style("border-width", "2px")
+        .style("border-radius", "2px")
+        .style("overflow", "hidden")
+        .style("white-space", "nowrap")
+        .style("padding", "10px");
+
+    let mouseover = function() {
+        tooltip.transition()
+            .duration(60)
+            .style("opacity", 0.9);
+    }
+    let mouseleave = function() {
+        tooltip.style("opacity", 0);
+    }
+    let mousemove = function(e, x) {
+        tooltip.html(`${x.used} / ${maxSize}`)
+            .style("left", (e.pageX - 50) + "px")
+            .style("top", (e.pageY - 50) + "px");
+    }
 
     svg.selectAll()
         .data(hmData)
@@ -60,7 +90,10 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .style("fill", function(d) { return colorScale(d.used); })
         .style("stroke-width", 4)
         .style("stroke", "none")
-        .style("opacity", 0.8);
+        .style("opacity", 1)
+        .on("mouseover", mouseover)
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave);
 };
 
 var draw = function(data, type, yAxis) {
