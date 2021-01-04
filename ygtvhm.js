@@ -1,7 +1,6 @@
 function show(hm) {
     for (div of [`${hm}_weekday`, `${hm}_weekend`]) {
         let x = document.getElementById(div);
-        console.log(x.style.display);
         if (x.style.display === "none" || x.style.display === "") {
             x.style.display = "block";
             x.style.visibility = "visible";
@@ -133,7 +132,7 @@ function draw(data, type, yAxis) {
             })
         });
         xAxis = Array.from(xAxisSet);
-        xAxis.sort();
+        xAxis.sort().reverse()
         heatmap(`weight_${type}`, weight, xAxis, yAxis);
         heatmap(`cybex_${type}`, cybex, xAxis, yAxis);
         heatmap(`cardio_${type}`, cardio, xAxis, yAxis);
