@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 from bs4 import BeautifulSoup
-import datetime
+from datetime import datetime, timedelta
 import json
 import os
 import requests
@@ -23,7 +23,7 @@ with open("config.json", "r") as fp:
 
 def fetch(dt_a, dt_z):
     uri = CFG["target"]
-    data = CFG["params"].copy()
+    data = CFG["params"]
     data["start"] = dt_a
     data["end"] = dt_z
 
@@ -37,26 +37,26 @@ def fetch(dt_a, dt_z):
 def daterange(dt_a, dt_z):
     def check(dt):
         if isinstance(dt, str):
-            dt = datetime.datetime.strptime(dt, "%Y%m%d")
+            dt = datetime.strptime(dt, "%Y%m%d")
         elif isinstance(dt, float):
-            dt = datetime.datetime.fromtimestamp(dt)
+            dt = datetime.fromtimestamp(dt)
             dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
         else:
             raise Exception(f"Invalid input range: {dt}")
         return dt
 
-    start_week = lambda x: x - datetime.timedelta(days=x.weekday())
-    fmt = lambda x: datetime.datetime.strftime(x, "%s")
+    start_week = lambda x: x - timedelta(days=x.weekday())
+    fmt = lambda x: datetime.strftime(x, "%s")
 
     dt_a = check(dt_a)
     dt_z = check(dt_z)
     a = start_week(dt_a)
     z = start_week(dt_z)
     while a <= z:
-        dtrange = (fmt(a), fmt(a + datetime.timedelta(days=6)))
+        dtrange = (fmt(a), fmt(a + timedelta(days=6)))
         if f"{'-'.join(dtrange)}.json" not in os.listdir(DATA):
             yield dtrange
-        a += datetime.timedelta(days=7)
+        a += timedelta(days=7)
 
 
 def transform(entry, r_weekday, r_weekend):
@@ -71,7 +71,7 @@ def transform(entry, r_weekday, r_weekend):
         return
 
     day, date = entry[0].split(", ", 1)
-    date = datetime.datetime.strptime(date, "%B %d, %Y").strftime("%Y-%m-%d")
+    date = datetime.strptime(date, "%B %d, %Y").strftime("%Y-%m-%d")
     used = ROOMS[room] - int(parse_spots(entry[9]))
     slot = entry[1]
 
@@ -95,7 +95,9 @@ def dedup(items):
             a["room"] == b["room"]
         )
 
-    weight, cardio, cybex = [], [], []
+    weight = list()
+    cardio = list()
+    cybex = list()
     for i in items:
         if i["room"] == "free":
             weight.append(i)

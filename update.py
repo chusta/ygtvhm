@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import argparse
 import os
 import re
 import subprocess
@@ -17,7 +16,7 @@ def run(cmd):
         stderr=subprocess.PIPE
     )
     out, err = p.communicate()
-    return out
+    return out.decode()
 
 
 def patch(data, date_type):
@@ -35,23 +34,25 @@ def patch(data, date_type):
 
 
 def main():
-    out = run("git ls-files").decode()
+    out = run("git ls-files")
     git_data = sorted([x for x in out.split("\n") if x.startswith("data/")])
     sys_data = sorted([f"data/{x}" for x in os.listdir(DATA)])
 
     rx = re.compile("data/[0-9]{10}-[0-9]{10}.json")
-    weekend, weekday = [], []
-    for x in sys_data:
-        if rx.match(x):
-            weekday.append(x)
-        else:
-            weekend.append(x)
+    weekday = list()
+    weekend = list()
 
-    for a, b in zip(weekday, weekend):
-        if a not in git_data:
-            patch(a, "WEEKDAY")
-        if b not in git_data:
-            patch(b, "WEEKEND")
+    for day in sys_data:
+        if rx.match(day):
+            weekday.append(day)
+        else:
+            weekend.append(day)
+
+    for day, end in zip(weekday, weekend):
+        if day not in git_data:
+            patch(day, "WEEKDAY")
+        if end not in git_data:
+            patch(end, "WEEKEND")
 
 
 if __name__ == "__main__":
