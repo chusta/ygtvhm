@@ -1,6 +1,4 @@
 var heatmap = function(divId, hmData, xAxis, yAxis) {
-    let colors = ["#ffffff", "#ffffff", "#ffe5c1", "#ffe5c1", "#ffc672", "#ffc672", "#ff9352", "#ff9352", "#ff4e37", "#ff4e37", "#ff0000", "#ff0000", "#ff0000"];
-
     let margin = {top: 50, right: 30, bottom: 100, left: 110};
     let width = xAxis.length * 35;
     let height = yAxis.length * 35;
@@ -37,11 +35,9 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .style("font-weight", "bold")
         .style("font-size", 12);
 
-    let maxSize = divId === "cybex" ? 9 : 12;
-
-    let colorScale = d3.scaleQuantile()
-        .domain([0, maxSize])
-        .range(colors);
+    let colorScale = d3.scaleLinear()
+        .range(["white", "#e00000"])
+        .domain([0, divId === "cybex" ? 9 : 12]);
 
     svg.append("text")
         .attr("x", 0)
