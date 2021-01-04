@@ -39,13 +39,15 @@ var heatmap = function(divId, hmData, xAxis, yAxis) {
         .range(["white", "#e00000"])
         .domain([0, divId === "cybex" ? 9 : 12]);
 
+    let [hmTitle, hmType] = divId.split("_");
+
     svg.append("text")
         .attr("x", 0)
         .attr("y", -10)
         .attr("text-anchor", "left")
         .style("font-size", "24px")
         .style("font-family", "monospace")
-        .text(divId);
+        .text(`${hmTitle} (${hmType})`);
 
     svg.selectAll()
         .data(hmData)
@@ -86,14 +88,15 @@ var draw = function(data, type, yAxis) {
         console.log(weight);
         console.log(xAxis);
         console.log(yAxis);
-        heatmap(`weight${type}`, weight, xAxis, yAxis);
-        heatmap(`cybex${type}`, cybex, xAxis, yAxis);
-        heatmap(`cardio${type}`, cardio, xAxis, yAxis);
+        heatmap(`weight_${type}`, weight, xAxis, yAxis);
+        heatmap(`cybex_${type}`, cybex, xAxis, yAxis);
+        heatmap(`cardio_${type}`, cardio, xAxis, yAxis);
     });
 };
 
 var yWeekday = ["6:45pm-8:00pm", "5:30pm-6:30pm", "4:15pm-5:15pm", "3:00pm-4:00pm", "10:00am-11:00am", "8:30am-9:45am", "7:00am-8:15am", "5:30am-6:45am"];
 var yWeekend = ["9:00am-10:00am", "8:00am-9:00am", "7:00am-8:00am"];
+
 var dataWeekday = [
 d3.json("data/1601870400-1602388800.json"),
 d3.json("data/1602475200-1602993600.json"),
@@ -110,6 +113,7 @@ d3.json("data/1608526800-1609045200.json"),
 d3.json("data/1609131600-1609650000.json"),
 /* WEEKDAY */
 ];
+
 var dataWeekend = [
 d3.json("data/1601870400-1602388800s.json"),
 d3.json("data/1602475200-1602993600s.json"),
@@ -126,5 +130,6 @@ d3.json("data/1608526800-1609045200s.json"),
 d3.json("data/1609131600-1609650000s.json"),
 /* WEEKEND */
 ];
-draw(dataWeekday, "_weekday", yWeekday);
-draw(dataWeekend, "_weekend", yWeekend);
+
+draw(dataWeekday, "weekday", yWeekday);
+draw(dataWeekend, "weekend", yWeekend);
