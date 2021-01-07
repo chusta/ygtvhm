@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 from bs4 import BeautifulSoup
-from datetime import date, datetime, time, timedelta
+from datetime import datetime, timedelta
 import json
 import os
 import requests
