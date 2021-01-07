@@ -4,35 +4,22 @@
 <head>
     <title>ygtvhm</title>
     <link id="favicon" rel="icon" type="image/x-icon" href="data:image/x-icon;base64,0"/>
+    <link rel="stylesheet" href="/static/css/main.css"/>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <style>
-        a {
-            font-family: monospace;
-            font-size: 18px;
-            color: black;
-            text-decoration: none;
-        }
-        .hide {
-            display: none;
-            visibility: hidden;
-        }
-    </style>
+    <script src="static/js/chart.js"></script>
 </head>
 
 <body>
-    <div>
-        <a href="#" onclick="show('weight');">weight</a> |
-        <a href="#" onclick="show('cardio');">cardio</a> |
-        <a href="#" onclick="show('cybex');">cybex</a>
-        <br/><br/><br/>
+    <div class="head">
+        <a id="id_weight" href="#" onclick="show('weight');">weight</a> |
+        <a id="id_cardio" href="#" onclick="show('cardio');">cardio</a> |
+        <a id="id_cybex" href="#" onclick="show('cybex');">cybex</a>
     </div>
+    <br/>
     <div id="tooltip"></div>
-    <div class="hide" id="weight_weekday"></div>
-    <div class="hide" id="weight_weekend"></div>
-    <div class="hide" id="cardio_weekday"></div>
-    <div class="hide" id="cardio_weekend"></div>
-    <div class="hide" id="cybex_weekday"></div>
-    <div class="hide" id="cybex_weekend"></div>
+    <div class="hide" id="weight"></div>
+    <div class="hide" id="cardio"></div>
+    <div class="hide" id="cybex"></div>
     <script src="ygtvhm.js"></script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+a {
+    color: black;
+    text-decoration: none;
+}
+
+div.head {
+    font-family: monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: black;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+div.hide {
+    display: none;
+    visibility: hidden;
+}
