@@ -42,13 +42,15 @@ def write(name, data):
 
 
 def patch(data, date_type):
-    with open(JS, "w+") as fp:
+    with open(JS, "r+") as fp:
         lines = fp.readlines()
         pos = lines.index(f"/* {date_type} */\n")
         line = f'd3.json("{data}"),\n'
         if line not in lines:
             lines.insert(pos, line)
+        fp.seek(0)
         fp.write("".join(lines))
+        fp.truncate()
     run(f"git add {data} {JS}")
     run(f"git commit -m 'add {data}'")
 
