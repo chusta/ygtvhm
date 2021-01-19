@@ -111,33 +111,33 @@ def transform(entry, weekday, weekend):
         weekend.append(data)
 
 
-def is_same(a, b):
-    return (
-        a["date"] == b["date"] and
-        a["slot"] == b["slot"] and
-        a["room"] == b["room"]
-    )
-
-
-def dedup(items):
-    weight, cardio, cybex = [], [], []
-    for i in items:
-        if i["room"] == "free":
-            weight.append(i)
-        elif i["room"] == "cardio":
-            cardio.append(i)
-        elif i["room"] == "cybex":
-            cybex.append(i)
-
-    for room in [weight, cardio, cybex]:
+def dedup(this, room):
+    try:
         last = room[-1]
-        for i in range(len(room) - 2, 0, -1):
-            this = room[i]
-            if is_same(last, this):
-                last["used"] += this["used"]
-                room.pop(i)
-                this = room[i]
-            last = this
+    except IndexError:
+        room.append(this)
+        return
+
+    is_same = (
+        this["date"] == last["date"] and
+        this["slot"] == last["slot"] and
+        this["room"] == last["room"]
+    )
+    if is_same:
+        last["used"] += this["used"]
+    else:
+        room.append(this)
+
+
+def include(items):
+    weight, cardio, cybex = [], [], []
+    for item in items:
+        if item["room"] == "cybex":
+            dedup(item, cybex)
+        elif item["room"] == "free":
+            dedup(item, weight)
+        elif item["room"] == "cardio":
+            dedup(item, cardio)
     return weight + cardio + cybex
 
 
@@ -146,8 +146,8 @@ def scrape(dt_a, dt_b):
         weekday, weekend = [], []
         for item in fetch(a, b):
             transform(item, weekday, weekend)
-        write(f"{a}-{b}.json", dedup(weekday))
-        write(f"{a}-{b}s.json", dedup(weekend))
+        write(f"{a}-{b}.json", include(weekday))
+        write(f"{a}-{b}s.json", include(weekend))
         time.sleep(1)
 
 
