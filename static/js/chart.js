@@ -114,6 +114,9 @@ function heatmap(divId, hmType, hmData, xAxis, yAxis) {
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
+
+    document.getElementById(`${divId}`)
+            .appendChild(document.createElement("br"));
 }
 
 function draw(data, type, yAxis) {
