@@ -55,6 +55,7 @@ d3.json("data/1613970000-1614488400s.json"),
 d3.json("data/1614574800-1615093200s.json"),
 d3.json("data/1615179600-1615698000s.json"),
 d3.json("data/1615780800-1616299200s.json"),
+d3.json("data/1616385600-1616904000s.json"),
 /* WEEKEND */
 ];
 
