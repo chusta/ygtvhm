@@ -146,8 +146,11 @@ def scrape(dt_a, dt_b):
         weekday, weekend = [], []
         for item in fetch(a, b):
             transform(item, weekday, weekend)
-        write(f"{a}-{b}.json", include(weekday))
-        write(f"{a}-{b}s.json", include(weekend))
+
+        if day := include(weekday):
+            write(f"{a}-{b}.json", day)
+        if end := include(weekend):
+            write(f"{a}-{b}s.json", end)
         time.sleep(1)
 
 
